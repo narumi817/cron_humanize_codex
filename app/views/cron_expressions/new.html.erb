@@ -1,0 +1,42 @@
+<main class="page-shell">
+  <section class="tool-panel">
+    <h1>cron humanizer</h1>
+    <p class="lead">5フィールドのcron式を、人が読みやすい日本語に変換します。</p>
+
+    <%= form_with url: root_path, method: :get, local: true, class: "cron-form" do |form| %>
+      <div class="field">
+        <%= form.label :expression, "cron式" %>
+        <%= form.text_field :expression,
+          value: @expression,
+          placeholder: "例: 0 9 * * 1-5",
+          autofocus: true,
+          autocomplete: "off" %>
+      </div>
+
+      <%= form.submit "変換する" %>
+    <% end %>
+
+    <% if @result.present? %>
+      <% if @result.success? %>
+        <section class="result result-success" aria-live="polite">
+          <span>説明</span>
+          <strong><%= @result.description %></strong>
+        </section>
+      <% else %>
+        <section class="result result-error" aria-live="polite">
+          <span>エラー</span>
+          <strong><%= @result.error %></strong>
+        </section>
+      <% end %>
+    <% end %>
+
+    <section class="examples">
+      <h2>例</h2>
+      <ul>
+        <li><code>* * * * *</code> 毎分</li>
+        <li><code>0 9 * * *</code> 毎日9:00</li>
+        <li><code>30 9 * * 1-5</code> 月曜日から金曜日の9:30</li>
+      </ul>
+    </section>
+  </section>
+</main>
