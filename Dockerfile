@@ -3,7 +3,7 @@ FROM ruby:3.3
 WORKDIR /rails
 
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential libsqlite3-dev pkg-config && \
+    apt-get install --no-install-recommends -y build-essential pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
 ENV BUNDLE_PATH="/usr/local/bundle"
