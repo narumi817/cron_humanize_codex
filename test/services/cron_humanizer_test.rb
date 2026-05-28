@@ -77,4 +77,39 @@ class CronHumanizerTest < ActiveSupport::TestCase
     assert_not result.success?
     assert_equal "分は0から59で入力してください", result.error
   end
+
+  test "rejects minute step greater than field maximum" do
+    result = CronHumanizer.call("*/100 * * * *")
+
+    assert_not result.success?
+    assert_equal "分の間隔は59以下で入力してください", result.error
+  end
+
+  test "rejects hour step greater than field maximum" do
+    result = CronHumanizer.call("0 */24 * * *")
+
+    assert_not result.success?
+    assert_equal "時の間隔は23以下で入力してください", result.error
+  end
+
+  test "rejects day of month step greater than field maximum" do
+    result = CronHumanizer.call("0 0 */32 * *")
+
+    assert_not result.success?
+    assert_equal "日の間隔は31以下で入力してください", result.error
+  end
+
+  test "rejects month step greater than field maximum" do
+    result = CronHumanizer.call("0 0 * */13 *")
+
+    assert_not result.success?
+    assert_equal "月の間隔は12以下で入力してください", result.error
+  end
+
+  test "rejects day of week step greater than field maximum" do
+    result = CronHumanizer.call("0 0 * * */8")
+
+    assert_not result.success?
+    assert_equal "曜日の間隔は7以下で入力してください", result.error
+  end
 end

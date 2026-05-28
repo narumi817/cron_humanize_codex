@@ -66,6 +66,7 @@ class CronHumanizer
     if value.match?(/\A\*\/\d+\z/)
       step = value.delete_prefix("*/").to_i
       return { error: "#{label_for(key)}の間隔は1以上で入力してください" } if step < 1
+      return { error: "#{label_for(key)}の間隔は#{FIELD_RANGES[key].last}以下で入力してください" } if step > FIELD_RANGES[key].last
 
       return { type: :step, step: step }
     end
