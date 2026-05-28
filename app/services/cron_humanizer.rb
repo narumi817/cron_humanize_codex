@@ -104,6 +104,7 @@ class CronHumanizer
     schedule_parts << describe_day_of_week(day_of_week) unless day_of_week[:type] == :any
 
     time_description = describe_time(hour, minute)
+    return time_description if schedule_parts.empty? && hour[:type] == :step
     return time_description if schedule_parts.empty? && time_description.start_with?("毎")
     return "毎日#{time_description}" if schedule_parts.empty?
 
@@ -115,17 +116,33 @@ class CronHumanizer
   end
 
   def describe_time(hour, minute)
-    if hour[:type] == :number && minute[:type] == :number
-      format("%<hour>d:%<minute>02d", hour: hour[:number], minute: minute[:number])
-    elsif hour[:type] == :any && minute[:type] == :number
-      "毎時#{minute[:number]}分"
-    elsif hour[:type] == :number && minute[:type] == :any
-      "#{hour[:number]}時の毎分"
-    elsif minute[:type] == :step
-      "#{minute[:step]}分ごと"
-    else
-      "毎分"
-    end
+    return format("%<hour>d:%<minute>02d", hour: hour[:number], minute: minute[:number]) if hour[:type] == :number && minute[:type] == :number
+    return describe_minute_for_any_hour(minute) if hour[:type] == :any
+
+    "#{describe_hour(hour)}の#{describe_minute(minute)}"
+  end
+
+  def describe_minute_for_any_hour(field)
+    return "毎分" if field[:type] == :any
+    return "毎時#{field[:number]}分" if field[:type] == :number
+    return describe_minute(field) if field[:type] == :step
+
+    "毎時#{describe_minute(field)}" if field[:type] == :range
+  end
+
+  def describe_hour(field)
+    return "#{field[:number]}時" if field[:type] == :number
+    return "#{field[:start_value]}時から#{field[:end_value]}時" if field[:type] == :range
+
+    "#{field[:step]}時間ごと"
+  end
+
+  def describe_minute(field)
+    return "毎分" if field[:type] == :any
+    return "#{field[:number]}分" if field[:type] == :number
+    return "#{field[:start_value]}分から#{field[:end_value]}分" if field[:type] == :range
+
+    "#{field[:step]}分ごと"
   end
 
   def describe_month(field)
