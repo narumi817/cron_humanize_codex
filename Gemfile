@@ -6,7 +6,7 @@ gem "rails", "8.1.3"
 gem "propshaft"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
-gem "minitest", "~> 5.25"
+gem "minitest", "~> 6.0"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
